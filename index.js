@@ -7,6 +7,7 @@ const lit = {
     },
     TOGGLE: "unlit",
   },
+  entry: ["entryLog"],
   exit: ["exitLog"],
 };
 const unlit = {
@@ -34,6 +35,7 @@ const config = {
 
 const options = {
   actions: {
+    entryLog: () => console.log("(entry action)"),
     transitionLog: () => console.log("(transition action)"),
     exitLog: () => console.log("(exit action)"),
     logPayload: (context, event) => console.log(`Payload: ${event.payload}`),
