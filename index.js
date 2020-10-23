@@ -7,20 +7,19 @@ const lit = {
     },
     TOGGLE: "unlit",
   },
-  exit: () => console.log("no more light! (exit action)"),
+  exit: ["exitLog"],
 };
 const unlit = {
   on: {
     BREAK: {
       target: "broken",
-      actions: () => console.log("(transition action)"),
+      actions: ["transitionLog"],
     },
     TOGGLE: "lit",
   },
 };
 const broken = {
-  entry: (context, event) =>
-    console.log(`I'm broken! with payload: ${event.payload} (entry action)`),
+  entry: ["logPayload", "buyANewBulb"],
   type: "final",
 };
 
@@ -33,13 +32,16 @@ const config = {
   strict: true,
 };
 
-const actions = {
-  // logBroken: (context, event) => {
-  // console.log(`I'm broken! with payload: ${event.payload}`);
-  // },
+const options = {
+  actions: {
+    transitionLog: () => console.log("(transition action)"),
+    exitLog: () => console.log("(exit action)"),
+    logPayload: (context, event) => console.log(`Payload: ${event.payload}`),
+    buyANewBulb: () => console.log("Buy a new bulb"),
+  },
 };
 
-const lightBulbMachine = Machine(config, { actions });
+const lightBulbMachine = Machine(config, options);
 
 const service = interpret(lightBulbMachine).start();
 
