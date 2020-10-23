@@ -2,13 +2,19 @@ const { Machine, interpret } = require("xstate");
 
 const lit = {
   on: {
-    BREAK: "broken",
+    BREAK: {
+      target: "broken",
+      actions: ["logBroken"],
+    },
     TOGGLE: "unlit",
   },
 };
 const unlit = {
   on: {
-    BREAK: "broken",
+    BREAK: {
+      target: "broken",
+      actions: ["logBroken"],
+    },
     TOGGLE: "lit",
   },
 };
@@ -18,32 +24,37 @@ const broken = {
 
 const states = { lit, unlit, broken };
 
-const initial = "unlit";
-
 const config = {
   id: "lightBulb",
-  initial,
+  initial: "unlit",
   states,
   strict: true,
 };
 
-const lightBulbMachine = Machine(config);
+const actions = {
+  logBroken: (context, event) => {
+    console.log(`I'm broken! with payload: ${event.payload}`);
+  },
+};
+
+const lightBulbMachine = Machine(config, { actions });
 
 const service = interpret(lightBulbMachine).start();
 
-service.onTransition(state => {
-  console.log('Current value:', state.value);
+service.onTransition((state) => {
+  console.log("Current value:", state.value);
 
-  if (state.changed) {
-    console.log('I`m changed!');
-  } else {
-    console.log('I`m not changed!');
-  }
+  // if (state.changed) {
+  //   console.log("I`m changed!");
+  // } else {
+  //   console.log("I`m not changed!");
+  // }
 
-  if (state.matches('lit')) {
-    console.log('I`m lit now!');
-  }
-})
+  // if (state.matches("lit")) {
+  //   console.log("I`m lit now!");
+  // }
+});
 
-service.send('TOGGLE');
-service.send('TOGGLE');
+service.send("TOGGLE");
+service.send("TOGGLE");
+service.send("BREAK", { payload: "some-payload" });
