@@ -14,6 +14,16 @@ const lit = {
     CHANGE_COLOR: {
       actions: ["setColor"],
     },
+    INCREMENT: {
+      actions: [
+        (ctx) => console.log(ctx.prevCount),
+        "savePrevCounter",
+        "increment",
+        "increment",
+        "increment",
+        (ctx) => console.log(ctx.count),
+      ],
+    },
   },
   entry: ["entryLog"],
   exit: ["exitLog"],
@@ -41,6 +51,8 @@ const config = {
   strict: true,
   context: {
     color: "white",
+    count: 0,
+    prevCount: undefined,
   },
 };
 
@@ -54,6 +66,12 @@ const options = {
     setColor: assign((context, event) => ({
       color: event.color || config.context.color,
     })),
+    increment: assign({
+      count: (ctx) => ctx.count + 1,
+    }),
+    savePrevCounter: assign({
+      prevCount: (ctx) => ctx.count,
+    }),
   },
 };
 
@@ -75,5 +93,6 @@ service.onTransition((state) => {
 
 service.send("TOGGLE");
 service.send("SPEAK");
+service.send("INCREMENT");
 service.send("TOGGLE");
 service.send("BREAK", { payload: "some-payload" });
