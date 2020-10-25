@@ -1,11 +1,16 @@
-const { Machine, interpret } = require("xstate");
+const { Machine, interpret, send } = require("xstate");
 
 const lit = {
   on: {
-    BREAK: {
-      target: "broken",
-    },
+    BREAK: "broken",
     TOGGLE: "unlit",
+    SPEAK: {
+      actions: [() => console.log(`I'm speaking something`), send("ECHO")],
+    },
+    ECHO: {
+      actions: () =>
+        console.log("There comes the echo because you spoke something!"),
+    },
   },
   entry: ["entryLog"],
   exit: ["exitLog"],
@@ -60,5 +65,6 @@ service.onTransition((state) => {
 });
 
 service.send("TOGGLE");
+service.send("SPEAK");
 service.send("TOGGLE");
 service.send("BREAK", { payload: "some-payload" });
