@@ -36,6 +36,7 @@ const unlit = {
     },
     TOGGLE: "lit",
   },
+  activities: ["beeping"],
 };
 const broken = {
   entry: ["logPayload", "buyANewBulb"],
@@ -61,9 +62,9 @@ const options = {
     entryLog: () => console.log("(entry action)"),
     transitionLog: () => console.log("(transition action)"),
     exitLog: () => console.log("(exit action)"),
-    logPayload: (context, event) => console.log(`Payload: ${event.payload}`),
+    logPayload: (ctx, event) => console.log(`Payload: ${event.payload}`),
     buyANewBulb: () => console.log("Buy a new bulb"),
-    setColor: assign((context, event) => ({
+    setColor: assign((ctx, event) => ({
       color: event.color || config.context.color,
     })),
     increment: assign({
@@ -72,6 +73,15 @@ const options = {
     savePrevCounter: assign({
       prevCount: (ctx) => ctx.count,
     }),
+  },
+  activities: {
+    beeping: () => {
+      const beep = () => console.log("beep activity");
+
+      beep();
+      const intervalId = setInterval(beep, 1000);
+      return () => clearInterval(intervalId);
+    },
   },
 };
 
