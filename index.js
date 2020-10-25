@@ -1,4 +1,4 @@
-const { Machine, interpret, send } = require("xstate");
+const { Machine, interpret, send, assign } = require("xstate");
 
 const lit = {
   on: {
@@ -10,6 +10,9 @@ const lit = {
     ECHO: {
       actions: () =>
         console.log("There comes the echo because you spoke something!"),
+    },
+    CHANGE_COLOR: {
+      actions: ["setColor"],
     },
   },
   entry: ["entryLog"],
@@ -36,6 +39,9 @@ const config = {
   initial: "unlit",
   states,
   strict: true,
+  context: {
+    color: "white",
+  },
 };
 
 const options = {
@@ -45,6 +51,9 @@ const options = {
     exitLog: () => console.log("(exit action)"),
     logPayload: (context, event) => console.log(`Payload: ${event.payload}`),
     buyANewBulb: () => console.log("Buy a new bulb"),
+    setColor: assign((context, event) => ({
+      color: event.color || config.context.color,
+    })),
   },
 };
 
