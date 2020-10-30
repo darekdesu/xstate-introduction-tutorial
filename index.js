@@ -54,17 +54,39 @@ const broken = {
 };
 
 const wallBox = {
-  initial: "opened",
+  on: {
+    SEE_INSIDE: "#unlit",
+  },
+  type: "parallel",
   states: {
-    closed: {
-      on: {
-        OPEN: "opened",
+    door: {
+      initial: "opened",
+      states: {
+        closed: {
+          on: {
+            OPEN: "opened",
+          },
+        },
+        opened: {
+          on: {
+            CLOSE: "closed",
+          },
+        },
       },
     },
-    opened: {
-      on: {
-        CLOSE: "closed",
-        SEE_INSIDE: "#unlit",
+    dust: {
+      initial: "clean",
+      states: {
+        clean: {
+          on: {
+            WAIT: "dirty",
+          },
+        },
+        dirty: {
+          on: {
+            CLEAN_UP: "clean",
+          },
+        },
       },
     },
   },
@@ -137,7 +159,7 @@ service.onTransition((state) => {
 
 service.send("SEE_OUTSIDE");
 service.send("CLOSE");
-service.send("OPEN");
+service.send("WAIT");
 service.send("SEE_INSIDE");
 service.send("TOGGLE_BULB_CHANGE");
 service.send("TOGGLE");
