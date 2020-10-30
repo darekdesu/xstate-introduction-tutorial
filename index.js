@@ -34,7 +34,13 @@ const unlit = {
       target: "broken",
       actions: ["transitionLog"],
     },
-    TOGGLE: "lit",
+    TOGGLE: {
+      target: "lit",
+      cond: "bulbChangedEnabled",
+    },
+    TOGGLE_BULB_CHANGE: {
+      actions: ["toggleBulbChange"],
+    },
   },
   activities: ["beeping"],
 };
@@ -54,6 +60,7 @@ const config = {
     color: "white",
     count: 0,
     prevCount: undefined,
+    isBulbChangeEnabled: false,
   },
 };
 
@@ -73,6 +80,9 @@ const options = {
     savePrevCounter: assign({
       prevCount: (ctx) => ctx.count,
     }),
+    toggleBulbChange: assign({
+      isBulbChangeEnabled: (context) => !context.isBulbChangeEnabled,
+    }),
   },
   activities: {
     beeping: () => {
@@ -82,6 +92,9 @@ const options = {
       const intervalId = setInterval(beep, 1000);
       return () => clearInterval(intervalId);
     },
+  },
+  guards: {
+    bulbChangedEnabled: (context) => context.isBulbChangeEnabled,
   },
 };
 
