@@ -28,7 +28,9 @@ const lit = {
   entry: ["entryLog"],
   exit: ["exitLog"],
 };
+
 const unlit = {
+  id: "unlit",
   on: {
     BREAK: {
       target: "broken",
@@ -41,15 +43,34 @@ const unlit = {
     TOGGLE_BULB_CHANGE: {
       actions: ["toggleBulbChange"],
     },
+    SEE_OUTSIDE: "wallBox",
   },
   activities: ["beeping"],
 };
+
 const broken = {
   entry: ["logPayload", "buyANewBulb"],
   type: "final",
 };
 
-const states = { lit, unlit, broken };
+const wallBox = {
+  initial: "opened",
+  states: {
+    closed: {
+      on: {
+        OPEN: "opened",
+      },
+    },
+    opened: {
+      on: {
+        CLOSE: "closed",
+        SEE_INSIDE: "#unlit",
+      },
+    },
+  },
+};
+
+const states = { lit, unlit, broken, wallBox };
 
 const config = {
   id: "lightBulb",
@@ -114,6 +135,11 @@ service.onTransition((state) => {
   // }
 });
 
+service.send("SEE_OUTSIDE");
+service.send("CLOSE");
+service.send("OPEN");
+service.send("SEE_INSIDE");
+service.send("TOGGLE_BULB_CHANGE");
 service.send("TOGGLE");
 service.send("SPEAK");
 service.send("INCREMENT");
