@@ -44,8 +44,16 @@ const unlit = {
       actions: ["toggleBulbChange"],
     },
     SEE_OUTSIDE: "wallBox.hist",
+    TRY_BREAK: "tryBreak",
   },
   activities: ["beeping"],
+};
+
+const tryBreak = {
+  entry: ["litEntryIncrease"],
+  on: {
+    "": [{ target: "broken", cond: "litTryBreakable" }, { target: "unlit" }],
+  },
 };
 
 const broken = {
@@ -96,7 +104,7 @@ const wallBox = {
   },
 };
 
-const states = { lit, unlit, broken, wallBox };
+const states = { lit, unlit, broken, wallBox, tryBreak };
 
 const config = {
   id: "lightBulb",
@@ -108,6 +116,7 @@ const config = {
     count: 0,
     prevCount: undefined,
     isBulbChangeEnabled: false,
+    litEntryCounter: 0,
   },
 };
 
@@ -130,6 +139,9 @@ const options = {
     toggleBulbChange: assign({
       isBulbChangeEnabled: (context) => !context.isBulbChangeEnabled,
     }),
+    litEntryIncrease: assign({
+      litEntryCounter: (context) => context.litEntryCounter + 1,
+    }),
   },
   activities: {
     beeping: () => {
@@ -142,6 +154,7 @@ const options = {
   },
   guards: {
     bulbChangedEnabled: (context) => context.isBulbChangeEnabled,
+    litTryBreakable: (context) => context.litEntryCounter > 2,
   },
 };
 
