@@ -43,7 +43,7 @@ const unlit = {
     TOGGLE_BULB_CHANGE: {
       actions: ["toggleBulbChange"],
     },
-    SEE_OUTSIDE: "wallBox",
+    SEE_OUTSIDE: "wallBox.hist",
   },
   activities: ["beeping"],
 };
@@ -88,6 +88,10 @@ const wallBox = {
           },
         },
       },
+    },
+    hist: {
+      type: "history",
+      history: "deep",
     },
   },
 };
