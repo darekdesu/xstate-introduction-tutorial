@@ -45,8 +45,34 @@ const unlit = {
     },
     SEE_OUTSIDE: "wallBox.hist",
     TRY_BREAK: "tryBreak",
+    GO_TO_STOP_LIGHT: "stopLight",
   },
   activities: ["beeping"],
+};
+
+const stopLight = {
+  id: "stopLight",
+  initial: "green",
+  on: {
+    SWITCH_TO_LIT: "lit",
+  },
+  states: {
+    green: {
+      after: {
+        ONE_SEC_IN_MS: "yellow",
+      },
+    },
+    yellow: {
+      after: {
+        ONE_SEC_IN_MS: "red",
+      },
+    },
+    red: {
+      after: {
+        ONE_SEC_IN_MS: "green",
+      },
+    },
+  },
 };
 
 const tryBreak = {
@@ -104,7 +130,7 @@ const wallBox = {
   },
 };
 
-const states = { lit, unlit, broken, wallBox, tryBreak };
+const states = { lit, unlit, broken, wallBox, tryBreak, stopLight };
 
 const config = {
   id: "lightBulb",
@@ -155,6 +181,9 @@ const options = {
   guards: {
     bulbChangedEnabled: (context) => context.isBulbChangeEnabled,
     litTryBreakable: (context) => context.litEntryCounter > 2,
+  },
+  delays: {
+    ONE_SEC_IN_MS: 1000,
   },
 };
 
