@@ -17,6 +17,22 @@ const echoCallbackHandler = (ctx, event) => (callback, onEvent) => {
   });
 };
 
+const childMachine = Machine({
+  id: "child",
+  initial: "step1",
+  states: {
+    step1: {
+      on: { STEP: "step2" },
+    },
+    step2: {
+      on: { STEP: "step3" },
+    },
+    step3: {
+      type: "final",
+    },
+  },
+});
+
 const lit = {
   invoke: {
     id: "echoCallback",
@@ -71,8 +87,23 @@ const unlit = {
     TRY_BREAK: "tryBreak",
     GO_TO_STOP_LIGHT: "stopLight",
     LOAD_POKEMONS: "pokemons",
+    GO_TO_STEPPER: "stepper",
   },
   activities: ["beeping"],
+};
+
+const stepper = {
+  id: "stepper",
+  invoke: {
+    id: "child",
+    src: childMachine,
+    onDone: "broken",
+  },
+  on: {
+    STEP: {
+      actions: send("STEP", { to: "child" }),
+    },
+  },
 };
 
 const pokemons = {
@@ -192,7 +223,16 @@ const wallBox = {
   },
 };
 
-const states = { lit, unlit, broken, wallBox, tryBreak, stopLight, pokemons };
+const states = {
+  lit,
+  unlit,
+  broken,
+  wallBox,
+  tryBreak,
+  stopLight,
+  pokemons,
+  stepper,
+};
 
 const config = {
   id: "lightBulb",
