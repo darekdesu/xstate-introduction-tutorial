@@ -1,5 +1,10 @@
 const { Machine, interpret, send, assign } = require("xstate");
 
+const fetchPokemons = ({ limit = 10, offset = 0 }) =>
+  fetch(`https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`)
+    .then((result) => result.json())
+    .then((data) => data.results.map((result) => result.name));
+
 const lit = {
   on: {
     BREAK: "broken",
@@ -46,8 +51,46 @@ const unlit = {
     SEE_OUTSIDE: "wallBox.hist",
     TRY_BREAK: "tryBreak",
     GO_TO_STOP_LIGHT: "stopLight",
+    LOAD_POKEMONS: "pokemons",
   },
   activities: ["beeping"],
+};
+
+const pokemons = {
+  id: "pokemons",
+  context: {
+    pokemons: [],
+    error: null,
+  },
+  initial: "loading",
+  states: {
+    loading: {
+      invoke: {
+        id: "fetchPokemons",
+        src: fetchPokemons,
+        onDone: {
+          target: "success",
+          actions: assign({
+            pokemons: (ctx, event) => event.data,
+          }),
+        },
+        onError: {
+          target: "failure",
+          actons: assign({
+            error: (ctx, event) => event.data,
+          }),
+        },
+      },
+    },
+    success: {
+      type: "final",
+    },
+    failure: {
+      on: {
+        RETRY: "loading",
+      },
+    },
+  },
 };
 
 const stopLight = {
@@ -130,7 +173,7 @@ const wallBox = {
   },
 };
 
-const states = { lit, unlit, broken, wallBox, tryBreak, stopLight };
+const states = { lit, unlit, broken, wallBox, tryBreak, stopLight, pokemons };
 
 const config = {
   id: "lightBulb",
