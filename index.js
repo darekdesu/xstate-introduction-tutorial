@@ -5,12 +5,31 @@ const fetchPokemons = ({ limit = 10, offset = 0 }) =>
     .then((result) => result.json())
     .then((data) => data.results.map((result) => result.name));
 
+const echoCallbackHandler = (ctx, event) => (callback, onEvent) => {
+  onEvent((event) => {
+    if (event.type === "HALLO") {
+      callback("ECHO");
+    } else {
+      console.log(
+        "There is no echo callback because event type is diffrent than HALLO :("
+      );
+    }
+  });
+};
+
 const lit = {
+  invoke: {
+    id: "echoCallback",
+    src: echoCallbackHandler,
+  },
   on: {
     BREAK: "broken",
     TOGGLE: "unlit",
     SPEAK: {
-      actions: [() => console.log(`I'm speaking something`), send("ECHO")],
+      actions: [
+        () => console.log(`I'm speaking something`),
+        send("HALLO", { to: "echoCallback" }),
+      ],
     },
     ECHO: {
       actions: () =>
