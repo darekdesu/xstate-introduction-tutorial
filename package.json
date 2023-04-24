@@ -12,8 +12,8 @@
     "xstate": "^4.13.0"
   },
   "devDependencies": {
-    "husky": "^4.3.0",
-    "lint-staged": "^10.4.2",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.2.1",
     "prettier": "^2.1.2"
   },
   "husky": {
